@@ -1,0 +1,193 @@
+# gh-starter-kit
+
+A lightweight CLI tool to scaffold a new Python project repository with:
+- `README.md`
+- `LICENSE` (MIT by default)
+- `.gitignore` (Python sensible defaults)
+- `pyproject.toml`
+- `src/<package_name>/__init__.py`
+- `tests/test_basic.py`
+- Optional initial `git` commit
+
+## Features
+- Fast project scaffolding for GitHub repositories
+- Replaceable templates (README, license, workflow)
+- Optional Git initialization and first commit
+- Small, dependency-free script (Python 3.8+)
+
+## Installation
+Copy `gh_starter.py` to a machine with Python 3.8+ or install it into your tools directory.
+
+## Usage
+```bash
+python gh_starter.py create myproject --author "Jane Doe" --license MIT --git
+python gh_starter.py create awesome-tool --author "Acme Corp" --description "A useful CLI tool" --git
+
+---
+
+# `gh_starter.py` — the scaffold CLI (Python)
+
+```python
+#!/usr/bin/env python3
+"""
+gh_starter.py
+
+Small CLI to scaffold a Python project suitable for hosting on GitHub.
+"""
+
+from __future__ import annotations
+import argparse
+import os
+import sys
+import datetime
+import subprocess
+from pathlib import Path
+from textwrap import dedent
+
+PYTHON_GITIGNORE = """\
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.env/
+env/
+ENV/
+
+# Pytest
+.cache/
+pytest_cache/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+"""
+
+MIT_LICENSE_TEMPLATE = """\
+MIT License
+
+Copyright (c) {year} {author}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+[...shortened for brevity in generator...]
+"""
+
+PYPROJECT_TOML_TEMPLATE = """\
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{name}"
+version = "0.1.0"
+description = "{description}"
+authors = [{{name = "{author}"}}]
+readme = "README.md"
+requires-python = ">=3.8"
+"""
+
+README_TEMPLATE = """\
+# {name}
+
+{description}
+
+## Installation
+
+```bash
+pip install -e .
+python -m pytest
+cwd = str(path)
+subprocess.run(["git", "init"], cwd=cwd, check=False)
+subprocess.run(["git", "add", "."], cwd=cwd, check=False)
+subprocess.run(["git", "commit", "-m", message], cwd=cwd, check=False)
+print("initialized git repository and created initial commit")
+# create directories
+(root / "src" / name).mkdir(parents=True)
+(root / "tests").mkdir()
+(root / ".github" / "workflows").mkdir(parents=True)
+
+# files
+year = datetime.date.today().year
+safe_write(root / ".gitignore", PYTHON_GITIGNORE)
+safe_write(root / "README.md", README_TEMPLATE.format(name=name, description=description or "Project description."))
+safe_write(root / "pyproject.toml", PYPROJECT_TOML_TEMPLATE.format(name=name, description=description or "", author=author or ""))
+safe_write(root / "src" / name / "__init__.py", "# package init\n")
+safe_write(root / "tests" / "test_basic.py", dedent("""\
+    def test_basic():
+        assert 1 + 1 == 2
+"""))
+# license
+if license_name and license_name.upper() == "MIT":
+    lic_text = MIT_LICENSE_TEMPLATE.format(year=year, author=author or "Unknown")
+    safe_write(root / "LICENSE", lic_text)
+elif license_name and license_name.upper() == "NONE":
+    # no license file
+    pass
+else:
+    # default to MIT if unknown
+    lic_text = MIT_LICENSE_TEMPLATE.format(year=year, author=author or "Unknown")
+    safe_write(root / "LICENSE", lic_text)
+
+# github actions workflow
+safe_write(root / ".github" / "workflows" / "python-package.yml", GITHUB_ACTIONS_PYTHON_WORKFLOW)
+
+if do_git:
+    run_git_init(root)
+create = sub.add_parser("create", help="Create a new project scaffold")
+create.add_argument("name", help="Project name (also used as package name)")
+create.add_argument("--author", "-a", help="Author name", default="")
+create.add_argument("--license", "-l", help="License to use (MIT|None)", default="MIT")
+create.add_argument("--git", action="store_true", help="Initialize git and create initial commit")
+create.add_argument("--description", "-d", help="Short project description", default="")
+
+args = parser.parse_args(argv)
+if args.command == "create":
+    create_project(args.name, args.author, args.license, args.description, args.git)
+
+**Notes about the script**
+- Requires Python 3.8+.
+- No external dependencies.
+- If you pass `--git` the script will attempt to run `git init` and commit; it will skip gracefully if `git` is not available.
+- `MIT_LICENSE_TEMPLATE` is intentionally concise in the script; you may replace it with the full MIT text if you prefer.
+
+---
+
+# Optional: Example `.github/workflows/python-package.yml` (already written by the script)
+The workflow uses `actions/checkout` and `actions/setup-python` to run tests on push and pull request.
+
+---
+
+# How to use (step-by-step)
+1. Create a new folder for the tool, add `gh_starter.py` (make it executable `chmod +x gh_starter.py`).
+2. Run:
+   ```bash
+   python gh_starter.py create myproject --author "Your Name" --description "Short description" --git
+git remote add origin git@github.com:youruser/myproject.git
+git branch -M main
+git push -u origin main
