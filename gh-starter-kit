@@ -14,7 +14,8 @@ A lightweight CLI tool to scaffold a new Python project repository with:
 - Replaceable templates (README, license, workflow)
 - Optional Git initialization and first commit
 - Small, dependency-free script (Python 3.8+)
-
+Replaceable templates (README, license, workflow)
+- Optional Git initialization and first commit
 ## Installation
 Copy `gh_starter.py` to a machine with Python 3.8+ or install it into your tools directory.
 
