@@ -8,6 +8,12 @@ A lightweight CLI tool to scaffold a new Python project repository with:
 - `src/<package_name>/__init__.py`
 - `tests/test_basic.py`
 - Optional initial `git` commit
+## Usage
+```bash
+python gh_starter.py create myproject --author "Jane Doe" --license MIT --git
+python gh_starter.py create awesome-tool --author "Acme Corp" --description "A useful CLI tool" --git
+
+---
 
 ## Features
 - Fast project scaffolding for GitHub repositories
@@ -19,12 +25,6 @@ Replaceable templates (README, license, workflow)
 ## Installation
 Copy `gh_starter.py` to a machine with Python 3.8+ or install it into your tools directory.
 
-## Usage
-```bash
-python gh_starter.py create myproject --author "Jane Doe" --license MIT --git
-python gh_starter.py create awesome-tool --author "Acme Corp" --description "A useful CLI tool" --git
-
----
 
 # `gh_starter.py` — the scaffold CLI (Python)
 
