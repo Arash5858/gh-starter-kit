@@ -1,17 +1,13 @@
 # gh-starter-kit
 
-A lightweight CLI tool to scaffold a new Python project repository with:
-- `README.md`
-- `LICENSE` (MIT by default)
-- `.gitignore` (Python sensible defaults)
-- `pyproject.toml`
-- `src/<package_name>/__init__.py`
-- `tests/test_basic.py`
-- Optional initial `git` commit
-## Usage
-```bash
-python gh_starter.py create myproject --author "Jane Doe" --license MIT --git
-python gh_starter.py create awesome-tool --author "Acme Corp" --description "A useful CLI tool" --git
+if do_git:
+    run_git_init(root)
+create = sub.add_parser("create", help="Create a new project scaffold")
+create.add_argument("name", help="Project name (also used as package name)")
+create.add_argument("--author", "-a", help="Author name", default="")
+create.add_argument("--license", "-l", help="License to use (MIT|None)", default="MIT")
+create.add_argument("--git", action="store_true", help="Initialize git and create initial commit")
+create.add_argument("--description", "-d", help="Short project description", default="")
 
 ---
 
@@ -157,15 +153,6 @@ else:
 
 # github actions workflow
 safe_write(root / ".github" / "workflows" / "python-package.yml", GITHUB_ACTIONS_PYTHON_WORKFLOW)
-
-if do_git:
-    run_git_init(root)
-create = sub.add_parser("create", help="Create a new project scaffold")
-create.add_argument("name", help="Project name (also used as package name)")
-create.add_argument("--author", "-a", help="Author name", default="")
-create.add_argument("--license", "-l", help="License to use (MIT|None)", default="MIT")
-create.add_argument("--git", action="store_true", help="Initialize git and create initial commit")
-create.add_argument("--description", "-d", help="Short project description", default="")
 
 args = parser.parse_args(argv)
 if args.command == "create":
